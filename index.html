@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Smart Hospital OS - Complete Operating System</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --card-bg: rgba(30, 41, 59, 0.8);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .emergency-gradient {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .critical-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .normal-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .background-gradient {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-warning {
+            background: #f59e0b;
+        }
+        
+        .status-danger {
+            background: #ef4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .gantt-block {
+            transition: all 0.3s ease;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .process-item {
+            border-left-width: 4px;
+            transition: transform 0.2s ease;
+        }
+        
+        .process-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .memory-block {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .memory-block:hover {
+            transform: scale(1.1);
+        }
+        
+        .file-card {
+            transition: all 0.3s ease;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .log-entry {
+            border-left-width: 4px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-10px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .alert-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Custom utility classes */
+        .border-red-500 { border-color: #ef4444; }
+        .border-orange-500 { border-color: #f59e0b; }
+        .border-blue-500 { border-color: #3b82f6; }
+        .border-gray-500 { border-color: #6b7280; }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Enhanced Responsive Chart Styles */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Responsive chart heights */
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 220px !important;
+            }
+            canvas {
+                max-height: 200px !important;
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .chart-container {
+                height: 280px !important;
+            }
+            canvas {
+                max-height: 260px !important;
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .chart-container {
+                height: 320px !important;
+            }
+            canvas {
+                max-height: 300px !important;
+            }
+        }
+        
+        /* Chart wrapper */
+        .chart-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: var(--card-bg);
+            padding: 1rem;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .chart-legend {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .legend-item {
+                font-size: 0.75rem;
+            }
+            
+            .chart-title {
+                font-size: 1rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .tab-btn {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.875rem;
+            }
+            
+            .tab-btn i {
+                font-size: 1rem !important;
+            }
+        }
+        
+        /* Tablet optimizations */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .chart-legend {
+                gap: 0.75rem;
+            }
+            
+            .legend-item {
+                font-size: 0.875rem;
+            }
+            
+            .chart-title {
+                font-size: 1.125rem !important;
+            }
+        }
+        
+        /* Chart tooltip improvements */
+        .chartjs-tooltip {
+            backdrop-filter: blur(10px) !important;
+            background: rgba(30, 41, 59, 0.95) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1rem !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        /* Animation for chart updates */
+        @keyframes chartUpdate {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .chart-updating {
+            animation: chartUpdate 1s ease-in-out;
+        }
+        
+        /* Progress bar enhancements */
+        .progress-bar-container {
+            position: relative;
+            height: 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center z-50">
+        <div class="text-center text-white">
+            <div class="loading mx-auto mb-4"></div>
+            <h1 class="text-3xl font-bold mb-2">Smart Hospital OS</h1>
+            <p class="text-gray-300">Initializing Medical Operating System...</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-6 max-w-7xl hidden" id="mainContainer">
+        <!-- Header -->
+        <header class="glass-card p-6 mb-6 shadow-xl">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="gradient-bg p-3 rounded-xl">
+                        <i class="fas fa-hospital-alt text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold gradient-text">Smart Hospital OS</h1>
+                        <p class="text-gray-500">Advanced Medical Operating Subsystem v3.0</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="glass-card px-4 py-2 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clock text-blue-500"></i>
+                            <span id="currentTime" class="font-mono">--:--:--</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card px-4 py-2 rounded-xl">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-user-md text-green-500"></i>
+                            <span id="currentUserRole">Administrator</span>
+                        </div>
+                    </div>
+                    
+                    <button id="themeToggle" class="glass-card p-3 rounded-xl hover:bg-opacity-80 transition-all">
+                        <i class="fas fa-moon text-yellow-500"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Emergency Alert Bar -->
+            <div id="emergencyAlert" class="emergency-gradient text-white p-4 rounded-xl mt-4 hidden">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-ambulance text-xl blink"></i>
+                        <span id="emergencyMessage" class="font-bold">EMERGENCY ALERT: Critical patient requires immediate attention!</span>
+                    </div>
+                    <button id="acknowledgeAlert" class="bg-white text-red-600 px-4 py-1 rounded-lg font-medium hover:bg-gray-100">
+                        <i class="fas fa-check mr-2"></i>Acknowledge
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="glass-card p-2 mb-6 shadow-xl flex flex-wrap gap-2">
+            <button data-tab="dashboard" class="tab-btn flex items-center gap-3 px-6 py-3 rounded-xl transition-all bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg">
+                <i class="fas fa-tachometer-alt"></i>
+                <span class="font-medium">Dashboard</span>
+            </button>
+            
+            <button data-tab="cpu" class="tab-btn flex items-center gap-3 px-6 py-3 rounded-xl transition-all hover:bg-opacity-80">
+                <i class="fas fa-microchip"></i>
+                <span class="font-medium">CPU Scheduler</span>
+            </button>
+            
+            <button data-tab="memory" class="tab-btn flex items-center gap-3 px-6 py-3 rounded-xl transition-all hover:bg-opacity-80">
+                <i class="fas fa-memory"></i>
+                <span class="font-medium">Memory</span>
+            </button>
+            
+            <button data-tab="files" class="tab-btn flex items-center gap-3 px-6 py-3 rounded-xl transition-all hover:bg-opacity-80">
+                <i class="fas fa-database"></i>
+                <span class="font-medium">EHR Vault</span>
+            </button>
+            
+            <button data-tab="security" class="tab-btn flex items-center gap-3 px-6 py-3 rounded-xl transition-all hover:bg-opacity-80">
+                <i class="fas fa-shield-alt"></i>
+                <span class="font-medium">Security</span>
+            </button>
+            
+            <button data-tab="settings" class="tab-btn flex items-center gap-3 px-6 py-3 rounded-xl transition-all hover:bg-opacity-80">
+                <i class="fas fa-cog"></i>
+                <span class="font-medium">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content space-y-6">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <i class="fas fa-microchip text-blue-500 text-2xl"></i>
+                            <span id="cpuUsage" class="text-2xl font-bold">65%</span>
+                        </div>
+                        <p class="text-gray-500">CPU Utilization</p>
+                        <div class="mt-3 progress-bar-container">
+                            <div id="cpuProgress" class="progress-bar-fill bg-gradient-to-r from-blue-500 to-cyan-500" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <i class="fas fa-memory text-green-500 text-2xl"></i>
+                            <span id="memoryUsage" class="text-2xl font-bold">78%</span>
+                        </div>
+                        <p class="text-gray-500">Memory Usage</p>
+                        <div class="mt-3 progress-bar-container">
+                            <div id="memoryProgress" class="progress-bar-fill bg-gradient-to-r from-green-500 to-emerald-500" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <i class="fas fa-database text-purple-500 text-2xl"></i>
+                            <span id="fileCount" class="text-2xl font-bold">3</span>
+                        </div>
+                        <p class="text-gray-500">EHR Files</p>
+                        <p class="text-sm mt-2">Encrypted & Secure</p>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <i class="fas fa-shield-alt text-red-500 text-2xl"></i>
+                            <span id="securityAlerts" class="text-2xl font-bold">2</span>
+                        </div>
+                        <p class="text-gray-500">Security Alerts</p>
+                        <p class="text-sm mt-2">Access Violations</p>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+                        <i class="fas fa-heartbeat"></i>
+                        System Status
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="glass-card p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="status-indicator status-active"></span>
+                                <span class="font-medium">Scheduler</span>
+                            </div>
+                            <p class="text-sm" id="schedulerStatus">Running</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="status-indicator status-active"></span>
+                                <span class="font-medium">Memory</span>
+                            </div>
+                            <p class="text-sm" id="memoryStatus">Stable</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="status-indicator status-active"></span>
+                                <span class="font-medium">File Vault</span>
+                            </div>
+                            <p class="text-sm" id="fileVaultStatus">Secure</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="status-indicator status-active"></span>
+                                <span class="font-medium">Authentication</span>
+                            </div>
+                            <p class="text-sm" id="authStatus">Active</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-card p-6 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+                        <i class="fas fa-bolt"></i>
+                        Quick Actions
+                    </h2>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button id="quickEmergency" class="p-4 rounded-xl emergency-gradient text-white flex flex-col items-center gap-2 transition-all hover:scale-105">
+                            <i class="fas fa-ambulance text-2xl"></i>
+                            <span class="font-medium">Emergency</span>
+                        </button>
+                        
+                        <button id="quickStart" class="p-4 rounded-xl normal-gradient text-white flex flex-col items-center gap-2 transition-all hover:scale-105">
+                            <i class="fas fa-play text-2xl"></i>
+                            <span class="font-medium">Start Simulation</span>
+                        </button>
+                        
+                        <button id="quickReset" class="p-4 rounded-xl critical-gradient text-white flex flex-col items-center gap-2 transition-all hover:scale-105">
+                            <i class="fas fa-redo text-2xl"></i>
+                            <span class="font-medium">Reset System</span>
+                        </button>
+                        
+                        <button id="quickReport" class="p-4 rounded-xl background-gradient text-white flex flex-col items-center gap-2 transition-all hover:scale-105">
+                            <i class="fas fa-file-export text-2xl"></i>
+                            <span class="font-medium">Export Report</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Charts - Updated with responsive containers -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="chart-wrapper glass-card rounded-2xl">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-3 chart-title">
+                            <i class="fas fa-microchip"></i>
+                            CPU Performance
+                        </h2>
+                        <div class="chart-container">
+                            <canvas id="cpuChart"></canvas>
+                        </div>
+                        <div class="chart-legend mt-4 flex flex-wrap gap-3 justify-center">
+                            <div class="legend-item flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <span class="text-sm">Emergency</span>
+                            </div>
+                            <div class="legend-item flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <span class="text-sm">Normal</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-wrapper glass-card rounded-2xl">
+                        <h2 class="text-xl font-bold mb-4 flex items-center gap-3 chart-title">
+                            <i class="fas fa-memory"></i>
+                            Memory Allocation
+                        </h2>
+                        <div class="chart-container">
+                            <canvas id="memoryChart"></canvas>
+                        </div>
+                        <div class="chart-info mt-4 text-sm text-center text-gray-500">
+                            Total: 1024 KB | Updated in real-time
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CPU Scheduler Tab -->
+            <div id="cpu" class="tab-content space-y-6 hidden">
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-microchip"></i>
+                            CPU Scheduler
+                        </h2>
+                        
+                        <div class="flex flex-wrap gap-3">
+                            <button id="startScheduler" class="px-6 py-3 rounded-xl font-medium flex items-center gap-2 normal-gradient text-white">
+                                <i class="fas fa-play"></i>
+                                Start
+                            </button>
+                            
+                            <button id="pauseScheduler" class="px-6 py-3 rounded-xl font-medium flex items-center gap-2 critical-gradient text-white">
+                                <i class="fas fa-pause"></i>
+                                Pause
+                            </button>
+                            
+                            <button id="resetScheduler" class="px-6 py-3 rounded-xl font-medium flex items-center gap-2 background-gradient text-white">
+                                <i class="fas fa-redo"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Process Queues -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Emergency & High Priority -->
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2 text-red-400">
+                                    <i class="fas fa-ambulance"></i>
+                                    Emergency Queue
+                                </h3>
+                                <div class="space-y-2 max-h-60 overflow-y-auto" id="emergencyQueue">
+                                    <!-- Emergency processes will be added here -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2 text-orange-400">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    High Priority Queue
+                                </h3>
+                                <div class="space-y-2 max-h-60 overflow-y-auto" id="highPriorityQueue">
+                                    <!-- High priority processes will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Normal & Background -->
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2 text-blue-400">
+                                    <i class="fas fa-tasks"></i>
+                                    Normal Queue (Round Robin)
+                                </h3>
+                                <div class="space-y-2 max-h-60 overflow-y-auto" id="normalQueue">
+                                    <!-- Normal processes will be added here -->
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-semibold mb-3 flex items-center gap-2 text-gray-400">
+                                    <i class="fas fa-server"></i>
+                                    Background Queue
+                                </h3>
+                                <div class="space-y-2 max-h-60 overflow-y-auto" id="backgroundQueue">
+                                    <!-- Background processes will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Currently Running -->
+                    <div id="currentProcessDisplay" class="mb-6 p-4 rounded-xl glass-card">
+                        <!-- Current process will be displayed here -->
+                    </div>
+
+                    <!-- Gantt Chart -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Gantt Chart</h3>
+                        <div class="overflow-x-auto">
+                            <div class="flex gap-1 min-w-max" id="ganttChart">
+                                <!-- Gantt blocks will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Process Form -->
+                    <div class="glass-card p-4 rounded-xl mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Add Medical Process</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <input type="text" id="processName" placeholder="Process Name" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            
+                            <select id="processType" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="Emergency">Emergency</option>
+                                <option value="Critical">Critical</option>
+                                <option value="Normal" selected>Normal</option>
+                                <option value="Background">Background</option>
+                            </select>
+                            
+                            <input type="number" id="processBurst" placeholder="Burst Time (ms)" value="10" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            
+                            <input type="number" id="processMemory" placeholder="Memory (KB)" value="64" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <button id="addProcessBtn" class="px-6 py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium transition-all">
+                            Add to Queue
+                        </button>
+                    </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Avg Waiting Time</p>
+                            <p id="avgWaitTime" class="text-2xl font-bold">0 ms</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Avg Turnaround Time</p>
+                            <p id="avgTurnaroundTime" class="text-2xl font-bold">0 ms</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Completed Processes</p>
+                            <p id="completedProcesses" class="text-2xl font-bold">0</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">CPU Utilization</p>
+                            <p id="cpuUtilization" class="text-2xl font-bold">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Memory Management Tab -->
+            <div id="memory" class="tab-content space-y-6 hidden">
+                <div class="glass-card p-6 rounded-2xl">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-memory"></i>
+                        Memory Management
+                    </h2>
+
+                    <!-- Memory Allocation Controls -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Fixed Partition Allocation -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Fixed Partition Allocation</h3>
+                            <div class="space-y-4">
+                                <div class="flex gap-4 mb-4">
+                                    <button data-method="first-fit" class="allocation-method px-4 py-2 rounded-lg glass-card border border-blue-500 text-blue-500">First Fit</button>
+                                    <button data-method="best-fit" class="allocation-method px-4 py-2 rounded-lg glass-card">Best Fit</button>
+                                    <button data-method="worst-fit" class="allocation-method px-4 py-2 rounded-lg glass-card">Worst Fit</button>
+                                </div>
+                                
+                                <div class="space-y-3" id="memoryPartitions">
+                                    <!-- Memory partitions will be added here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Paging Simulation -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Virtual Memory (Paging)</h3>
+                            <div class="space-y-4">
+                                <div class="glass-card p-4 rounded-xl">
+                                    <div class="flex gap-4 mb-4">
+                                        <input type="text" id="pageReference" value="7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1" class="flex-1 px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <button id="simulatePaging" class="px-6 py-2 rounded-lg normal-gradient text-white font-medium">
+                                            Simulate
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="glass-card p-3 rounded-lg">
+                                            <p class="text-sm text-gray-500">Page Hits</p>
+                                            <p id="pageHits" class="text-2xl font-bold text-green-400">0</p>
+                                        </div>
+                                        
+                                        <div class="glass-card p-3 rounded-lg">
+                                            <p class="text-sm text-gray-500">Page Faults</p>
+                                            <p id="pageFaults" class="text-2xl font-bold text-red-400">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Page Table -->
+                                <div>
+                                    <h4 class="font-medium mb-2">Page Table (LRU Replacement)</h4>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="pageTable">
+                                        <!-- Page table entries will be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memory Statistics -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Total Memory</p>
+                            <p id="totalMemory" class="text-2xl font-bold">1024 KB</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Allocated</p>
+                            <p id="allocatedMemory" class="text-2xl font-bold">0 KB</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Hit Ratio</p>
+                            <p id="hitRatio" class="text-2xl font-bold">0%</p>
+                        </div>
+                        
+                        <div class="glass-card p-4 rounded-xl">
+                            <p class="text-sm text-gray-500">Fault Rate</p>
+                            <p id="faultRate" class="text-2xl font-bold">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Vault Tab -->
+            <div id="files" class="tab-content space-y-6 hidden">
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-database"></i>
+                            Secure EHR File Vault
+                        </h2>
+                        
+                        <div class="flex gap-3">
+                            <button id="exportLogs" class="px-6 py-3 rounded-xl normal-gradient text-white font-medium flex items-center gap-2">
+                                <i class="fas fa-download"></i>
+                                Export Logs
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Create New File -->
+                    <div class="glass-card p-4 rounded-xl mb-6">
+                        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-file-upload"></i>
+                            Create New EHR File
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <input type="text" id="fileName" placeholder="File name (e.g., patient_record.ehr)" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            
+                            <select id="encryptionType" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="base64">Base64 Double Encoding</option>
+                                <option value="xor">XOR Cipher</option>
+                                <option value="caesar">Caesar Cipher</option>
+                            </select>
+                            
+                            <select id="allocationMethod" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="contiguous">Contiguous Allocation</option>
+                                <option value="indexed">Indexed Allocation</option>
+                                <option value="linked">Linked Allocation</option>
+                            </select>
+                            
+                            <input type="password" id="encryptionKey" placeholder="Encryption Key" value="HOSPITAL2024" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <textarea id="fileContent" placeholder="Enter patient medical record content..." rows="4" class="w-full mb-4 px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        
+                        <button id="createFileBtn" class="px-6 py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium transition-all">
+                            Create & Encrypt File
+                        </button>
+                    </div>
+
+                    <!-- File Browser -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-folder-open"></i>
+                            EHR Files (<span id="totalFiles">3</span>)
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="fileBrowser">
+                            <!-- Files will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- File Allocation Map -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3">File Allocation Map</h3>
+                        <div class="glass-card p-4 rounded-xl">
+                            <div class="grid grid-cols-8 gap-2" id="allocationMap">
+                                <!-- Allocation blocks will be added here -->
+                            </div>
+                            
+                            <div class="flex gap-4 mt-4 text-sm">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-blue-500 rounded"></div>
+                                    <span>Allocated Block</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 bg-gray-700 rounded"></div>
+                                    <span>Free Block</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Logs -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-clipboard-list"></i>
+                            Audit Logs
+                        </h3>
+                        
+                        <div class="space-y-2 max-h-80 overflow-y-auto" id="auditLogs">
+                            <!-- Audit logs will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="security" class="tab-content space-y-6 hidden">
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-shield-alt"></i>
+                            Security & RBAC
+                        </h2>
+                        
+                        <div class="flex gap-3">
+                            <button id="logoutBtn" class="px-6 py-3 rounded-xl emergency-gradient text-white font-medium flex items-center gap-2">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Login Panel -->
+                    <div class="glass-card p-4 rounded-xl mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Authentication</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <select id="userRole" class="px-4 py-2 rounded-lg glass-card border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="Administrator">Administrator</option>
+                                <option value="Doctor">Doctor</option>
+                                <option value="Nurse">Nurse</option>
+                                <option value="Guest">Guest</option>
+                            </select>
+                            
+                            <button id="quickLogin" class="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium">
+                                Quick Login
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-500">Current User:</span>
+                            <span id="currentRole" class="font-medium text-green-400">Administrator</span>
+                        </div>
+                    </div>
+
+                    <!-- Access Control Matrix -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Access Control Matrix (RBAC)</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full glass-card rounded-xl overflow-hidden">
+                                <thead>
+                                    <tr class="bg-gradient-to-r from-blue-900 to-purple-900">
+                                        <th class="py-3 px-4 text-left">Resource</th>
+                                        <th class="py-3 px-4 text-center">Admin</th>
+                                        <th class="py-3 px-4 text-center">Doctor</th>
+                                        <th class="py-3 px-4 text-center">Nurse</th>
+                                        <th class="py-3 px-4 text-center">Guest</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="accessMatrix">
+                                    <!-- Access matrix will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Security Logs -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-3">Security Logs</h3>
+                        <div class="space-y-2 max-h-80 overflow-y-auto" id="securityLogs">
+                            <!-- Security logs will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Active Users -->
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3">Active Users</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="activeUsers">
+                            <!-- Active users will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content space-y-6 hidden">
+                <div class="glass-card p-6 rounded-2xl">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-cog"></i>
+                        System Configuration
+                    </h2>
+
+                    <!-- System Settings -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Simulation Settings -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Simulation Parameters</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-400">Process Generation Rate</label>
+                                    <select id="processRate" class="px-4 py-2 rounded-lg glass-card border border-gray-700">
+                                        <option value="1000">Slow (1/sec)</option>
+                                        <option value="500" selected>Normal (2/sec)</option>
+                                        <option value="250">Fast (4/sec)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-400">Auto Emergency Mode</label>
+                                    <input type="checkbox" id="autoEmergency" class="w-4 h-4" checked>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-400">Sound Alerts</label>
+                                    <input type="checkbox" id="soundAlerts" class="w-4 h-4" checked>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <label class="text-gray-400">Show Animations</label>
+                                    <input type="checkbox" id="showAnimations" class="w-4 h-4" checked>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Theme -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Color Theme</h3>
+                            <div class="grid grid-cols-4 gap-3">
+                                <button data-theme="dark" class="theme-selector p-4 rounded-lg bg-gradient-to-br from-gray-900 to-slate-800 text-white border-2 border-blue-500">
+                                    Dark
+                                </button>
+                                
+                                <button data-theme="light" class="theme-selector p-4 rounded-lg bg-gradient-to-br from-gray-100 to-white text-gray-800">
+                                    Light
+                                </button>
+                                
+                                <button data-theme="blue" class="theme-selector p-4 rounded-lg bg-gradient-to-br from-blue-900 to-cyan-800 text-white">
+                                    Blue
+                                </button>
+                                
+                                <button data-theme="green" class="theme-selector p-4 rounded-lg bg-gradient-to-br from-emerald-900 to-green-800 text-white">
+                                    Green
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Information -->
+                    <div class="glass-card p-4 rounded-xl mb-6">
+                        <h3 class="text-lg font-semibold mb-3">System Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">OS Version:</span>
+                                    <span class="font-medium">Smart Hospital OS v3.0</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Last Updated:</span>
+                                    <span class="font-medium">2024-12-01</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Total Processes:</span>
+                                    <span id="totalProcessesCount" class="font-medium">0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Memory Size:</span>
+                                    <span class="font-medium">1024 KB</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Storage:</span>
+                                    <span class="font-medium">256 Blocks</span>
+                                </div>
+                                
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Uptime:</span>
+                                    <span id="systemUptime" class="font-medium">00:00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="glass-card p-4 rounded-xl border-2 border-red-500">
+                        <h3 class="text-lg font-semibold mb-3 text-red-400">Danger Zone</h3>
+                        <div class="space-y-3">
+                            <button id="clearLogs" class="px-4 py-2 rounded-lg bg-red-900 text-red-100 hover:bg-red-800 transition-all w-full">
+                                Clear All Logs
+                            </button>
+                            
+                            <button id="resetSystem" class="px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-pink-600 text-white hover:from-red-700 hover:to-pink-700 transition-all w-full">
+                                <i class="fas fa-skull-crossbones mr-2"></i>
+                                Full System Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="glass-card p-6 mt-6 text-center text-gray-500 text-sm">
+            <p>Smart Hospital OS - Complete Operating System Simulation</p>
+            <p class="mt-2">© 2024 Medical Systems Laboratory | Educational Simulation Only</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize variables
+        let currentTab = 'dashboard';
+        let isRunning = false;
+        let currentTheme = 'dark';
+        let startTime = new Date();
+        let systemUptimeInterval;
+        let cpuUsageInterval;
+        let schedulerInterval;
+        let processCounter = 1;
+        let completedProcesses = 0;
+        let totalWaitingTime = 0;
+        let totalTurnaroundTime = 0;
+        let cpuUtilizationStart = Date.now();
+        let cpuBusyTime = 0;
+        let memoryAllocated = 0;
+        const totalMemory = 1024;
+        let currentAllocationMethod = 'first-fit';
+        let pageTable = new Array(8).fill(-1);
+        let pageReferences = [];
+        let currentReferenceIndex = 0;
+        let pageHits = 0;
+        let pageFaults = 0;
+        let files = [];
+        let allocationMap = new Array(256).fill(false);
+        let securityLogs = [];
+        let accessMatrix = {
+            'dashboard': { 'Administrator': true, 'Doctor': true, 'Nurse': true, 'Guest': true },
+            'cpu': { 'Administrator': true, 'Doctor': true, 'Nurse': true, 'Guest': false },
+            'memory': { 'Administrator': true, 'Doctor': true, 'Nurse': false, 'Guest': false },
+            'files': { 'Administrator': true, 'Doctor': true, 'Nurse': true, 'Guest': false },
+            'security': { 'Administrator': true, 'Doctor': false, 'Nurse': false, 'Guest': false },
+            'settings': { 'Administrator': true, 'Doctor': false, 'Nurse': false, 'Guest': false }
+        };
+        let currentUserRole = 'Administrator';
+        let activeUsers = ['Administrator', 'Doctor', 'Nurse'];
+        
+        // Process queues
+        let emergencyQueue = [];
+        let highPriorityQueue = [];
+        let normalQueue = [];
+        let backgroundQueue = [];
+        let ganttChart = [];
+        let currentProcess = null;
+        let processQueue = [];
+        
+        // Memory partitions
+        const memoryPartitions = [
+            { id: 1, size: 256, allocated: false, process: null, start: 0 },
+            { id: 2, size: 128, allocated: false, process: null, start: 256 },
+            { id: 3, size: 128, allocated: false, process: null, start: 384 },
+            { id: 4, size: 256, allocated: false, process: null, start: 512 },
+            { id: 5, size: 256, allocated: false, process: null, start: 768 }
+        ];
+        
+        // Initialize charts
+        let cpuChart, memoryChart;
+        
+        // DOM Elements
+        const loadingScreen = document.getElementById('loadingScreen');
+        const mainContainer = document.getElementById('mainContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const themeToggle = document.getElementById('themeToggle');
+        const emergencyAlert = document.getElementById('emergencyAlert');
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const quickEmergencyBtn = document.getElementById('quickEmergency');
+        const quickStartBtn = document.getElementById('quickStart');
+        const quickResetBtn = document.getElementById('quickReset');
+        const quickReportBtn = document.getElementById('quickReport');
+        const startSchedulerBtn = document.getElementById('startScheduler');
+        const pauseSchedulerBtn = document.getElementById('pauseScheduler');
+        const resetSchedulerBtn = document.getElementById('resetScheduler');
+        const addProcessBtn = document.getElementById('addProcessBtn');
+        const emergencyQueueEl = document.getElementById('emergencyQueue');
+        const highPriorityQueueEl = document.getElementById('highPriorityQueue');
+        const normalQueueEl = document.getElementById('normalQueue');
+        const backgroundQueueEl = document.getElementById('backgroundQueue');
+        const ganttChartEl = document.getElementById('ganttChart');
+        const currentProcessDisplay = document.getElementById('currentProcessDisplay');
+        const allocationMethods = document.querySelectorAll('.allocation-method');
+        const memoryPartitionsEl = document.getElementById('memoryPartitions');
+        const simulatePagingBtn = document.getElementById('simulatePaging');
+        const pageTableEl = document.getElementById('pageTable');
+        const createFileBtn = document.getElementById('createFileBtn');
+        const fileBrowserEl = document.getElementById('fileBrowser');
+        const allocationMapEl = document.getElementById('allocationMap');
+        const auditLogsEl = document.getElementById('auditLogs');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const quickLoginBtn = document.getElementById('quickLogin');
+        const accessMatrixEl = document.getElementById('accessMatrix');
+        const securityLogsEl = document.getElementById('securityLogs');
+        const activeUsersEl = document.getElementById('activeUsers');
+        const clearLogsBtn = document.getElementById('clearLogs');
+        const resetSystemBtn = document.getElementById('resetSystem');
+        const processRateSelect = document.getElementById('processRate');
+        const themeSelectors = document.querySelectorAll('.theme-selector');
+        const acknowledgeAlertBtn = document.getElementById('acknowledgeAlert');
+        
+        // Initialize system
+        function init() {
+            // Hide loading screen after 2 seconds
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                mainContainer.classList.remove('hidden');
+                
+                // Initialize responsive charts first
+                initCharts();
+                
+                // Initialize other components
+                initMemoryPartitions();
+                initFileSystem();
+                initSecurity();
+                initSettings();
+                updateUI();
+                
+                // Start responsive timers
+                startTimers();
+                
+                // Add some initial processes
+                generateInitialProcesses();
+                
+                // Initialize responsive event listeners
+                initResponsiveEvents();
+                
+                // Log system start
+                addSecurityLog('SYSTEM', 'System initialized successfully', 'success');
+                
+            }, 2000);
+        }
+        
+        // Initialize responsive event listeners
+        function initResponsiveEvents() {
+            // Handle window resize for charts
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function() {
+                    if (cpuChart) {
+                        cpuChart.resize();
+                        cpuChart.update('none');
+                    }
+                    if (memoryChart) {
+                        memoryChart.resize();
+                        memoryChart.update('none');
+                    }
+                }, 250); // Debounce resize
+            });
+            
+            // Handle orientation change
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    if (cpuChart) {
+                        cpuChart.resize();
+                        cpuChart.update();
+                    }
+                    if (memoryChart) {
+                        memoryChart.resize();
+                        memoryChart.update();
+                    }
+                }, 500);
+            });
+        }
+        
+        // Start background timers
+        function startTimers() {
+            // Update time every second
+            setInterval(updateTime, 1000);
+            
+            // Update system uptime every second
+            systemUptimeInterval = setInterval(updateUptime, 1000);
+            
+            // Simulate CPU usage changes
+            cpuUsageInterval = setInterval(updateCPUUsage, 2000);
+            
+            // Start automatic process generation if enabled
+            startProcessGeneration();
+            
+            updateTime();
+        }
+        
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            currentTimeEl.textContent = timeString;
+        }
+        
+        // Update system uptime
+        function updateUptime() {
+            const now = new Date();
+            const uptime = Math.floor((now - startTime) / 1000);
+            const hours = Math.floor(uptime / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((uptime % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (uptime % 60).toString().padStart(2, '0');
+            
+            document.getElementById('systemUptime').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // Update CPU usage simulation with dynamic data
+        function updateCPUUsage() {
+            if (!isRunning) return;
+            
+            // Simulate hospital-specific CPU patterns
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const second = now.getSeconds();
+            
+            // Calculate dynamic CPU usage based on time and system activity
+            let baseCPU = 40;
+            let emergencyCPU = 15;
+            
+            // Time-based patterns
+            if (hour >= 9 && hour < 17) {
+                // Peak hours - high activity
+                baseCPU = 65 + Math.sin(minute / 60 * Math.PI * 2) * 15;
+                emergencyCPU = 25 + Math.sin(second / 60 * Math.PI * 2) * 10;
+            } else if (hour >= 17 && hour < 22) {
+                // Evening - moderate with emergencies
+                baseCPU = 55 + Math.random() * 15;
+                emergencyCPU = 20 + Math.random() * 10;
+            } else if (hour >= 6 && hour < 9) {
+                // Morning ramp-up
+                baseCPU = 45 + (hour - 6) * 10 + Math.random() * 10;
+                emergencyCPU = 15 + Math.random() * 8;
+            } else {
+                // Night - minimal
+                baseCPU = 30 + Math.random() * 10;
+                emergencyCPU = 5 + Math.random() * 5;
+            }
+            
+            // Activity-based adjustments
+            if (currentProcess) {
+                baseCPU += 20;
+                emergencyCPU += 5;
+            }
+            
+            if (emergencyQueue.length > 0) {
+                emergencyCPU += emergencyQueue.length * 5;
+                baseCPU += emergencyQueue.length * 2;
+            }
+            
+            if (normalQueue.length > 5) {
+                baseCPU += 10;
+            }
+            
+            // Add random variation
+            baseCPU += Math.sin(second / 10) * 3;
+            emergencyCPU += Math.cos(second / 15) * 2;
+            
+            // Ensure values are within bounds
+            baseCPU = Math.min(Math.max(baseCPU, 20), 85);
+            emergencyCPU = Math.min(Math.max(emergencyCPU, 5), 40);
+            
+            // Update display
+            const totalCpuUsage = Math.min(100, Math.round(baseCPU + emergencyCPU * 0.4));
+            const cpuUsageEl = document.getElementById('cpuUsage');
+            const cpuProgressEl = document.getElementById('cpuProgress');
+            
+            cpuUsageEl.textContent = `${totalCpuUsage}%`;
+            cpuProgressEl.style.width = `${totalCpuUsage}%`;
+            
+            // Update CPU chart with new data point
+            if (cpuChart) {
+                const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                // Shift data and add new point
+                cpuChart.data.labels.shift();
+                cpuChart.data.labels.push(currentTime);
+                
+                cpuChart.data.datasets[0].data.shift();
+                cpuChart.data.datasets[0].data.push(emergencyCPU);
+                
+                cpuChart.data.datasets[1].data.shift();
+                cpuChart.data.datasets[1].data.push(baseCPU);
+                
+                // Smooth update
+                cpuChart.update('none');
+            }
+            
+            // Update CPU utilization metric
+            if (currentProcess) {
+                cpuBusyTime += 150;
+            } else {
+                cpuBusyTime += 50;
+            }
+            
+            const totalTime = Date.now() - cpuUtilizationStart;
+            const utilization = totalTime > 0 ? Math.min(100, Math.round((cpuBusyTime / totalTime) * 100)) : 0;
+            document.getElementById('cpuUtilization').textContent = `${utilization}%`;
+        }
+        
+        // Initialize charts with responsive design
+        function initCharts() {
+            // Calculate responsive height based on screen size
+            const calculateChartHeight = () => {
+                if (window.innerWidth < 768) {
+                    return 200; // Mobile
+                } else if (window.innerWidth < 1024) {
+                    return 250; // Tablet
+                } else {
+                    return 300; // Desktop
+                }
+            };
+            
+            // Set initial heights
+            document.getElementById('cpuChart').height = calculateChartHeight();
+            document.getElementById('memoryChart').height = calculateChartHeight();
+            
+            // CPU Performance Chart - Enhanced with hospital data
+            const cpuCtx = document.getElementById('cpuChart').getContext('2d');
+            
+            // Generate time labels for the last 12 hours (hourly)
+            const timeLabels = [];
+            const now = new Date();
+            for (let i = 11; i >= 0; i--) {
+                const time = new Date(now.getTime() - (i * 60 * 60 * 1000));
+                timeLabels.push(time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            }
+            
+            // Generate realistic hospital CPU data
+            const generateCPUData = () => {
+                const data = [];
+                // Night shift (12 AM - 6 AM) - low activity
+                for (let i = 0; i < 6; i++) {
+                    data.push(25 + Math.random() * 15);
+                }
+                // Morning rush (6 AM - 12 PM) - high activity
+                for (let i = 0; i < 6; i++) {
+                    data.push(60 + Math.random() * 25);
+                }
+                return data;
+            };
+            
+            cpuChart = new Chart(cpuCtx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [
+                        {
+                            label: 'Emergency CPU Usage',
+                            data: generateCPUData(),
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        },
+                        {
+                            label: 'Normal CPU Usage',
+                            data: generateCPUData().map(val => val * 0.7), // Normal is about 70% of emergency
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: 'var(--text-primary)',
+                                font: {
+                                    size: () => window.innerWidth < 768 ? 10 : 12
+                                },
+                                padding: 10,
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'var(--card-bg)',
+                            titleColor: 'var(--text-primary)',
+                            bodyColor: 'var(--text-primary)',
+                            borderColor: 'var(--border-color)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'var(--text-secondary)',
+                                font: {
+                                    size: () => window.innerWidth < 768 ? 9 : 11
+                                },
+                                padding: 5,
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'CPU Usage %',
+                                color: 'var(--text-secondary)',
+                                font: {
+                                    size: () => window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'var(--text-secondary)',
+                                font: {
+                                    size: () => window.innerWidth < 768 ? 8 : 10
+                                },
+                                maxRotation: 45,
+                                minRotation: 45,
+                                padding: 5
+                            },
+                            title: {
+                                display: true,
+                                text: 'Time (Last 12 Hours)',
+                                color: 'var(--text-secondary)',
+                                font: {
+                                    size: () => window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+            
+            // Memory Allocation Chart - Enhanced with hospital categories
+            const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+            
+            // Hospital-specific memory categories
+            const memoryCategories = [
+                'Patient Records',
+                'Medical Imaging',
+                'Lab Results',
+                'Monitoring',
+                'Admin',
+                'Free'
+            ];
+            
+            // Generate initial hospital memory data
+            const generateMemoryData = () => {
+                return [
+                    35 + Math.random() * 10,  // Patient Records: 35-45%
+                    20 + Math.random() * 8,   // Medical Imaging: 20-28%
+                    15 + Math.random() * 5,   // Lab Results: 15-20%
+                    12 + Math.random() * 4,   // Monitoring: 12-16%
+                    8 + Math.random() * 3,    // Admin: 8-11%
+                    10 - Math.random() * 5    // Free: 5-10%
+                ];
+            };
+            
+            memoryChart = new Chart(memoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: memoryCategories,
+                    datasets: [{
+                        data: generateMemoryData(),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.9)',    // Blue - Patient Records
+                            'rgba(139, 92, 246, 0.9)',    // Purple - Medical Imaging
+                            'rgba(16, 185, 129, 0.9)',    // Green - Lab Results
+                            'rgba(245, 158, 11, 0.9)',    // Orange - Monitoring
+                            'rgba(239, 68, 68, 0.9)',     // Red - Admin
+                            'rgba(100, 116, 139, 0.7)'    // Gray - Free
+                        ],
+                        borderColor: 'var(--bg-primary)',
+                        borderWidth: 2,
+                        hoverOffset: 15,
+                        hoverBorderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: window.innerWidth < 768 ? 'bottom' : 'right',
+                            labels: {
+                                color: 'var(--text-primary)',
+                                font: {
+                                    size: () => window.innerWidth < 768 ? 10 : 11
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                            const percentage = Math.round((value / total) * 100);
+                                            
+                                            return {
+                                                text: `${label} (${percentage}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].borderColor,
+                                                lineWidth: 2,
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'var(--card-bg)',
+                            titleColor: 'var(--text-primary)',
+                            bodyColor: 'var(--text-primary)',
+                            borderColor: 'var(--border-color)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    const memoryKB = Math.round((percentage / 100) * totalMemory);
+                                    return `${label}: ${percentage}% (${memoryKB} KB)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: window.innerWidth < 768 ? '50%' : '60%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+            
+            // Make charts responsive on window resize
+            window.addEventListener('resize', function() {
+                // Update chart heights
+                const newHeight = calculateChartHeight();
+                cpuChart.canvas.height = newHeight;
+                memoryChart.canvas.height = newHeight;
+                
+                // Update chart options for mobile
+                if (cpuChart && memoryChart) {
+                    // Update legend positions
+                    memoryChart.options.plugins.legend.position = window.innerWidth < 768 ? 'bottom' : 'right';
+                    memoryChart.options.cutout = window.innerWidth < 768 ? '50%' : '60%';
+                    
+                    // Update font sizes
+                    const updateFontSizes = () => {
+                        if (window.innerWidth < 768) {
+                            return { legend: 10, ticks: 9, title: 10 };
+                        } else if (window.innerWidth < 1024) {
+                            return { legend: 11, ticks: 10, title: 11 };
+                        } else {
+                            return { legend: 12, ticks: 11, title: 12 };
+                        }
+                    };
+                    
+                    const fontSizes = updateFontSizes();
+                    
+                    // Update CPU chart
+                    if (cpuChart.options.plugins.legend.labels) {
+                        cpuChart.options.plugins.legend.labels.font.size = fontSizes.legend;
+                    }
+                    if (cpuChart.options.scales.y.ticks) {
+                        cpuChart.options.scales.y.ticks.font.size = fontSizes.ticks;
+                        cpuChart.options.scales.y.title.font.size = fontSizes.title;
+                    }
+                    if (cpuChart.options.scales.x.ticks) {
+                        cpuChart.options.scales.x.ticks.font.size = fontSizes.ticks - 1;
+                        cpuChart.options.scales.x.title.font.size = fontSizes.title;
+                    }
+                    
+                    // Update Memory chart
+                    if (memoryChart.options.plugins.legend.labels) {
+                        memoryChart.options.plugins.legend.labels.font.size = fontSizes.legend - 1;
+                    }
+                    
+                    // Redraw charts
+                    cpuChart.resize();
+                    memoryChart.resize();
+                    cpuChart.update('none');
+                    memoryChart.update('none');
+                }
+            });
+        }
+        
+        // Update memory statistics with dynamic allocation
+        function updateMemoryStats() {
+            // Calculate memory usage with realistic fluctuations
+            const memoryPercentage = Math.round((memoryAllocated / totalMemory) * 100);
+            
+            // Add small random fluctuations to simulate real system
+            const fluctuation = Math.sin(Date.now() / 10000) * 2;
+            const displayPercentage = Math.min(100, Math.max(0, memoryPercentage + fluctuation));
+            
+            document.getElementById('memoryUsage').textContent = `${Math.round(displayPercentage)}%`;
+            document.getElementById('memoryProgress').style.width = `${Math.round(displayPercentage)}%`;
+            
+            // Update detailed memory info
+            document.getElementById('totalMemory').textContent = `${totalMemory} KB`;
+            document.getElementById('allocatedMemory').textContent = `${memoryAllocated} KB`;
+            
+            // Update file count
+            document.getElementById('fileCount').textContent = files.length;
+            
+            // Update security alerts
+            const criticalAlerts = securityLogs.filter(log => log.type === 'danger').length;
+            document.getElementById('securityAlerts').textContent = criticalAlerts;
+            
+            // Update page hit/fault stats
+            const totalAccesses = pageHits + pageFaults;
+            const hitRatio = totalAccesses > 0 ? Math.round((pageHits / totalAccesses) * 100) : 0;
+            const faultRate = totalAccesses > 0 ? Math.round((pageFaults / totalAccesses) * 100) : 0;
+            
+            document.getElementById('hitRatio').textContent = `${hitRatio}%`;
+            document.getElementById('faultRate').textContent = `${faultRate}%`;
+            
+            // Update memory chart with dynamic hospital data
+            if (memoryChart) {
+                // Calculate memory distribution by process type
+                const memoryByType = {
+                    'Patient Records': 0,
+                    'Medical Imaging': 0,
+                    'Lab Results': 0,
+                    'Monitoring': 0,
+                    'Admin': 0,
+                    'Free': 0
+                };
+                
+                // Simulate realistic hospital memory allocation
+                const now = new Date();
+                const hour = now.getHours();
+                
+                // Time-based memory patterns
+                let patientRecords = 35;
+                let medicalImaging = 20;
+                let labResults = 15;
+                let monitoring = 12;
+                let admin = 8;
+                
+                if (hour >= 9 && hour < 17) {
+                    // Daytime - more active memory usage
+                    patientRecords = 40 + Math.random() * 10;
+                    medicalImaging = 25 + Math.random() * 8;
+                    labResults = 18 + Math.random() * 6;
+                    monitoring = 15 + Math.random() * 5;
+                    admin = 10 + Math.random() * 4;
+                } else if (hour >= 17 && hour < 22) {
+                    // Evening - more monitoring
+                    patientRecords = 38 + Math.random() * 8;
+                    medicalImaging = 22 + Math.random() * 6;
+                    labResults = 16 + Math.random() * 5;
+                    monitoring = 18 + Math.random() * 6;
+                    admin = 9 + Math.random() * 3;
+                }
+                
+                // Add actual allocated memory influence
+                const actualAllocatedPercent = memoryAllocated / totalMemory * 100;
+                const scaleFactor = actualAllocatedPercent / (patientRecords + medicalImaging + labResults + monitoring + admin);
+                
+                patientRecords *= scaleFactor;
+                medicalImaging *= scaleFactor;
+                labResults *= scaleFactor;
+                monitoring *= scaleFactor;
+                admin *= scaleFactor;
+                
+                const free = 100 - (patientRecords + medicalImaging + labResults + monitoring + admin);
+                
+                // Update chart data with smooth transition
+                memoryChart.data.datasets[0].data = [
+                    Math.round(patientRecords),
+                    Math.round(medicalImaging),
+                    Math.round(labResults),
+                    Math.round(monitoring),
+                    Math.round(admin),
+                    Math.max(0, Math.round(free))
+                ];
+                
+                // Normalize to 100%
+                const total = memoryChart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                if (total !== 100) {
+                    const adjustment = 100 - total;
+                    memoryChart.data.datasets[0].data[5] = Math.max(0, memoryChart.data.datasets[0].data[5] + adjustment);
+                }
+                
+                memoryChart.update('none');
+            }
+        }
+        
+        // Initialize memory partitions
+        function initMemoryPartitions() {
+            memoryPartitionsEl.innerHTML = '';
+            memoryPartitions.forEach(partition => {
+                const partitionEl = document.createElement('div');
+                partitionEl.className = 'glass-card p-4 rounded-xl';
+                partitionEl.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">Partition ${partition.id}</span>
+                        <span class="text-sm text-gray-400">${partition.size} KB</span>
+                    </div>
+                    <div class="h-4 bg-gray-700 rounded-full overflow-hidden">
+                        <div id="partition-${partition.id}" class="h-full ${partition.allocated ? 'bg-blue-500' : 'bg-gray-600'}" style="width: 100%"></div>
+                    </div>
+                    <div class="mt-2 text-sm" id="partition-info-${partition.id}">
+                        ${partition.allocated ? `Allocated to ${partition.process}` : 'Free'}
+                    </div>
+                `;
+                memoryPartitionsEl.appendChild(partitionEl);
+            });
+            
+            // Update memory statistics
+            updateMemoryStats();
+        }
+        
+        // Initialize file system
+        function initFileSystem() {
+            // Create initial EHR files
+            const initialFiles = [
+                {
+                    name: 'john_doe.ehr',
+                    type: 'Emergency',
+                    size: 128,
+                    encrypted: true,
+                    allocation: 'contiguous',
+                    content: 'Patient: John Doe\nAge: 45\nCondition: Acute Appendicitis\nBlood Type: O+\nAllergies: Penicillin\nTreatment: Emergency surgery scheduled'
+                },
+                {
+                    name: 'jane_smith.ehr',
+                    type: 'Critical',
+                    size: 64,
+                    encrypted: true,
+                    allocation: 'indexed',
+                    content: 'Patient: Jane Smith\nAge: 32\nCondition: Pneumonia\nBlood Type: A-\nAllergies: None\nTreatment: Antibiotics + Oxygen therapy'
+                },
+                {
+                    name: 'lab_results.ehr',
+                    type: 'Normal',
+                    size: 32,
+                    encrypted: true,
+                    allocation: 'linked',
+                    content: 'Lab Results Summary\nPatient Count: 47\nCritical Cases: 3\nPending Tests: 12\nCompleted Today: 35'
+                }
+            ];
+            
+            files = initialFiles;
+            updateFileBrowser();
+            updateAllocationMap();
+            updateAuditLogs();
+        }
+        
+        // Initialize security system
+        function initSecurity() {
+            updateAccessMatrix();
+            updateSecurityLogs();
+            updateActiveUsers();
+        }
+        
+        // Initialize settings
+        function initSettings() {
+            // Set initial toggle states
+            document.getElementById('autoEmergency').checked = true;
+            document.getElementById('soundAlerts').checked = true;
+            document.getElementById('showAnimations').checked = true;
+        }
+        
+        // Update all UI elements
+        function updateUI() {
+            updateProcessQueues();
+            updateCurrentProcess();
+            updateGanttChart();
+            updatePerformanceMetrics();
+            updateMemoryStats();
+            updateFileBrowser();
+            updateAllocationMap();
+            updateAuditLogs();
+            updateSecurityLogs();
+            updateActiveUsers();
+            updateAccessMatrix();
+        }
+        
+        // Generate initial processes
+        function generateInitialProcesses() {
+            const initialProcesses = [
+                { name: 'Emergency Scan', type: 'Emergency', burstTime: 8, memory: 128 },
+                { name: 'Blood Analysis', type: 'Critical', burstTime: 5, memory: 64 },
+                { name: 'Patient Monitor', type: 'Normal', burstTime: 10, memory: 32 },
+                { name: 'X-Ray Imaging', type: 'Normal', burstTime: 12, memory: 96 },
+                { name: 'Data Backup', type: 'Background', burstTime: 20, memory: 256 }
+            ];
+            
+            initialProcesses.forEach(proc => {
+                addProcess(proc.name, proc.type, proc.burstTime, proc.memory);
+            });
+            
+            document.getElementById('totalProcessesCount').textContent = processCounter - 1;
+        }
+        
+        // Add a new process
+        function addProcess(name, type, burstTime, memory) {
+            const process = {
+                id: processCounter++,
+                name: name,
+                type: type,
+                burstTime: burstTime,
+                remainingTime: burstTime,
+                memory: memory,
+                arrivalTime: Date.now(),
+                startTime: null,
+                endTime: null,
+                waitingTime: 0,
+                turnaroundTime: 0
+            };
+            
+            // Allocate memory if possible
+            const allocated = allocateMemory(process);
+            if (!allocated) {
+                addSecurityLog('MEMORY', `Failed to allocate memory for process ${process.name}`, 'danger');
+                return false;
+            }
+            
+            // Add to appropriate queue
+            switch(type) {
+                case 'Emergency':
+                    emergencyQueue.push(process);
+                    break;
+                case 'Critical':
+                    highPriorityQueue.push(process);
+                    break;
+                case 'Normal':
+                    normalQueue.push(process);
+                    break;
+                case 'Background':
+                    backgroundQueue.push(process);
+                    break;
+            }
+            
+            // Add to combined process queue for scheduling
+            processQueue.push(process);
+            
+            // Update UI
+            updateProcessQueues();
+            updateMemoryStats();
+            
+            // Log the addition
+            addSecurityLog('SCHEDULER', `Added new ${type} process: ${name}`, 'info');
+            
+            return true;
+        }
+        
+        // Allocate memory for a process
+        function allocateMemory(process) {
+            let allocated = false;
+            
+            switch(currentAllocationMethod) {
+                case 'first-fit':
+                    allocated = allocateFirstFit(process);
+                    break;
+                case 'best-fit':
+                    allocated = allocateBestFit(process);
+                    break;
+                case 'worst-fit':
+                    allocated = allocateWorstFit(process);
+                    break;
+            }
+            
+            if (allocated) {
+                memoryAllocated += process.memory;
+                updateMemoryStats();
+                if (memoryChart) {
+                    memoryChart.update('none');
+                }
+            }
+            
+            return allocated;
+        }
+        
+        // First-fit allocation
+        function allocateFirstFit(process) {
+            for (let i = 0; i < memoryPartitions.length; i++) {
+                const partition = memoryPartitions[i];
+                if (!partition.allocated && partition.size >= process.memory) {
+                    partition.allocated = true;
+                    partition.process = process.name;
+                    updatePartitionUI(partition.id);
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // Best-fit allocation
+        function allocateBestFit(process) {
+            let bestPartition = null;
+            let bestSize = Infinity;
+            
+            for (let i = 0; i < memoryPartitions.length; i++) {
+                const partition = memoryPartitions[i];
+                if (!partition.allocated && partition.size >= process.memory) {
+                    if (partition.size < bestSize) {
+                        bestSize = partition.size;
+                        bestPartition = partition;
+                    }
+                }
+            }
+            
+            if (bestPartition) {
+                bestPartition.allocated = true;
+                bestPartition.process = process.name;
+                updatePartitionUI(bestPartition.id);
+                return true;
+            }
+            return false;
+        }
+        
+        // Worst-fit allocation
+        function allocateWorstFit(process) {
+            let worstPartition = null;
+            let worstSize = -1;
+            
+            for (let i = 0; i < memoryPartitions.length; i++) {
+                const partition = memoryPartitions[i];
+                if (!partition.allocated && partition.size >= process.memory) {
+                    if (partition.size > worstSize) {
+                        worstSize = partition.size;
+                        worstPartition = partition;
+                    }
+                }
+            }
+            
+            if (worstPartition) {
+                worstPartition.allocated = true;
+                worstPartition.process = process.name;
+                updatePartitionUI(worstPartition.id);
+                return true;
+            }
+            return false;
+        }
+        
+        // Update partition UI
+        function updatePartitionUI(partitionId) {
+            const partition = memoryPartitions.find(p => p.id === partitionId);
+            const partitionBar = document.getElementById(`partition-${partitionId}`);
+            const partitionInfo = document.getElementById(`partition-info-${partitionId}`);
+            
+            if (partitionBar && partitionInfo) {
+                if (partition.allocated) {
+                    partitionBar.className = 'h-full bg-blue-500';
+                    partitionInfo.textContent = `Allocated to ${partition.process}`;
+                } else {
+                    partitionBar.className = 'h-full bg-gray-600';
+                    partitionInfo.textContent = 'Free';
+                }
+            }
+        }
+        
+        // Update process queues UI
+        function updateProcessQueues() {
+            // Emergency Queue
+            emergencyQueueEl.innerHTML = '';
+            emergencyQueue.forEach(process => {
+                emergencyQueueEl.appendChild(createProcessElement(process, 'emergency'));
+            });
+            
+            // High Priority Queue
+            highPriorityQueueEl.innerHTML = '';
+            highPriorityQueue.forEach(process => {
+                highPriorityQueueEl.appendChild(createProcessElement(process, 'high'));
+            });
+            
+            // Normal Queue
+            normalQueueEl.innerHTML = '';
+            normalQueue.forEach(process => {
+                normalQueueEl.appendChild(createProcessElement(process, 'normal'));
+            });
+            
+            // Background Queue
+            backgroundQueueEl.innerHTML = '';
+            backgroundQueue.forEach(process => {
+                backgroundQueueEl.appendChild(createProcessElement(process, 'background'));
+            });
+        }
+        
+        // Create process element
+        function createProcessElement(process, queueType) {
+            const div = document.createElement('div');
+            div.className = `glass-card p-3 rounded-xl process-item border-${queueType === 'emergency' ? 'red' : queueType === 'high' ? 'orange' : queueType === 'normal' ? 'blue' : 'gray'}-500`;
+            div.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-medium">${process.name}</div>
+                        <div class="text-sm text-gray-500">ID: ${process.id} | Memory: ${process.memory}KB</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-mono">${process.remainingTime}ms</div>
+                        <div class="text-xs text-gray-500">${process.burstTime}ms total</div>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+        
+        // Update current process display
+        function updateCurrentProcess() {
+            if (currentProcess) {
+                currentProcessDisplay.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="gradient-bg p-3 rounded-xl">
+                                <i class="fas fa-microchip text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">${currentProcess.name}</h3>
+                                <p class="text-gray-500">Type: ${currentProcess.type} | ID: ${currentProcess.id}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-mono text-green-400">${currentProcess.remainingTime}ms</div>
+                            <p class="text-gray-500">remaining</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="h-3 bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500" style="width: ${(currentProcess.remainingTime / currentProcess.burstTime) * 100}%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-500 mt-2">
+                            <span>Progress</span>
+                            <span>${Math.round(((currentProcess.burstTime - currentProcess.remainingTime) / currentProcess.burstTime) * 100)}%</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                currentProcessDisplay.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-microchip text-4xl mb-4"></i>
+                        <p class="text-xl">No process currently running</p>
+                        <p class="mt-2">Start the scheduler to begin execution</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Update Gantt chart
+        function updateGanttChart() {
+            ganttChartEl.innerHTML = '';
+            
+            ganttChart.forEach((item, index) => {
+                const block = document.createElement('div');
+                block.className = 'gantt-block glass-card p-2 rounded-lg';
+                
+                let bgClass = 'background-gradient';
+                if (item.type === 'Emergency') bgClass = 'emergency-gradient';
+                else if (item.type === 'Critical') bgClass = 'critical-gradient';
+                else if (item.type === 'Normal') bgClass = 'normal-gradient';
+                
+                block.classList.add(bgClass);
+                block.innerHTML = `
+                    <div class="text-xs font-medium">${item.process}</div>
+                    <div class="text-xs opacity-75">${item.time}ms</div>
+                `;
+                
+                ganttChartEl.appendChild(block);
+            });
+        }
+        
+        // Update performance metrics
+        function updatePerformanceMetrics() {
+            document.getElementById('completedProcesses').textContent = completedProcesses;
+            
+            const avgWait = completedProcesses > 0 ? Math.round(totalWaitingTime / completedProcesses) : 0;
+            const avgTurnaround = completedProcesses > 0 ? Math.round(totalTurnaroundTime / completedProcesses) : 0;
+            
+            document.getElementById('avgWaitTime').textContent = `${avgWait} ms`;
+            document.getElementById('avgTurnaroundTime').textContent = `${avgTurnaround} ms`;
+        }
+        
+        // Update memory chart
+        function updateMemoryChart() {
+            if (memoryChart) {
+                memoryChart.data.datasets[0].data = [memoryAllocated, totalMemory - memoryAllocated];
+                memoryChart.update();
+            }
+        }
+        
+        // Update file browser
+        function updateFileBrowser() {
+            fileBrowserEl.innerHTML = '';
+            document.getElementById('totalFiles').textContent = files.length;
+            
+            files.forEach((file, index) => {
+                const fileCard = document.createElement('div');
+                fileCard.className = 'file-card glass-card p-4 rounded-xl';
+                fileCard.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <i class="fas fa-file-medical text-blue-400"></i>
+                                <span class="font-medium">${file.name}</span>
+                            </div>
+                            <div class="text-xs text-gray-500">${file.size} KB | ${file.allocation}</div>
+                        </div>
+                        <span class="px-2 py-1 rounded text-xs ${file.type === 'Emergency' ? 'bg-red-900 text-red-300' : file.type === 'Critical' ? 'bg-orange-900 text-orange-300' : 'bg-blue-900 text-blue-300'}">
+                            ${file.type}
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-400 mb-4 line-clamp-2">${file.content.substring(0, 60)}...</div>
+                    <div class="flex justify-between">
+                        <button onclick="viewFile(${index})" class="px-3 py-1 rounded-lg glass-card text-xs hover:bg-opacity-80">
+                            <i class="fas fa-eye mr-1"></i>View
+                        </button>
+                        <button onclick="decryptFile(${index})" class="px-3 py-1 rounded-lg glass-card text-xs hover:bg-opacity-80">
+                            <i class="fas fa-key mr-1"></i>Decrypt
+                        </button>
+                    </div>
+                `;
+                fileBrowserEl.appendChild(fileCard);
+            });
+        }
+        
+        // Update allocation map
+        function updateAllocationMap() {
+            allocationMapEl.innerHTML = '';
+            
+            // Take first 64 blocks for display
+            for (let i = 0; i < 64; i++) {
+                const block = document.createElement('div');
+                block.className = `memory-block w-8 h-8 rounded ${allocationMap[i] ? 'bg-blue-500' : 'bg-gray-700'}`;
+                block.title = `Block ${i}: ${allocationMap[i] ? 'Allocated' : 'Free'}`;
+                allocationMapEl.appendChild(block);
+            }
+        }
+        
+        // Update audit logs
+        function updateAuditLogs() {
+            // Simulated audit logs
+            const logs = [
+                { time: '12:30:45', action: 'File created: john_doe.ehr', user: 'Admin' },
+                { time: '12:45:22', action: 'Emergency process started', user: 'System' },
+                { time: '13:10:15', action: 'Memory allocation changed to First-Fit', user: 'Admin' },
+                { time: '13:25:30', action: 'Security scan completed', user: 'System' },
+                { time: '13:40:05', action: 'User login: Doctor', user: 'Security' }
+            ];
+            
+            auditLogsEl.innerHTML = '';
+            logs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry glass-card p-3 rounded-xl border-l-4 border-blue-500';
+                logEntry.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">${log.action}</span>
+                        <span class="text-sm text-gray-500">${log.time}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">User: ${log.user}</div>
+                `;
+                auditLogsEl.appendChild(logEntry);
+            });
+        }
+        
+        // Update security logs
+        function updateSecurityLogs() {
+            securityLogsEl.innerHTML = '';
+            
+            securityLogs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry glass-card p-3 rounded-xl border-l-4 ${log.type === 'danger' ? 'border-red-500' : log.type === 'warning' ? 'border-yellow-500' : 'border-green-500'}`;
+                logEntry.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">${log.source}: ${log.message}</span>
+                        <span class="text-sm text-gray-500">${log.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                `;
+                securityLogsEl.appendChild(logEntry);
+            });
+        }
+        
+        // Update active users
+        function updateActiveUsers() {
+            activeUsersEl.innerHTML = '';
+            
+            activeUsers.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'glass-card p-4 rounded-xl text-center';
+                userCard.innerHTML = `
+                    <div class="mb-2">
+                        <i class="fas fa-user-md text-2xl ${user === 'Administrator' ? 'text-blue-400' : user === 'Doctor' ? 'text-green-400' : user === 'Nurse' ? 'text-purple-400' : 'text-gray-400'}"></i>
+                    </div>
+                    <div class="font-medium">${user}</div>
+                    <div class="flex items-center justify-center mt-2">
+                        <span class="status-indicator status-active"></span>
+                        <span class="text-xs text-gray-500">Active</span>
+                    </div>
+                `;
+                activeUsersEl.appendChild(userCard);
+            });
+        }
+        
+        // Update access matrix
+        function updateAccessMatrix() {
+            accessMatrixEl.innerHTML = '';
+            
+            const resources = Object.keys(accessMatrix);
+            resources.forEach(resource => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-700';
+                
+                let resourceName = resource;
+                if (resource === 'cpu') resourceName = 'CPU Scheduler';
+                else if (resource === 'files') resourceName = 'EHR Vault';
+                else if (resource === 'memory') resourceName = 'Memory';
+                else if (resource === 'security') resourceName = 'Security';
+                else if (resource === 'settings') resourceName = 'Settings';
+                
+                row.innerHTML = `
+                    <td class="py-3 px-4">${resourceName}</td>
+                    <td class="py-3 px-4 text-center">
+                        <i class="fas fa-${accessMatrix[resource]['Administrator'] ? 'check text-green-400' : 'times text-red-400'}"></i>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <i class="fas fa-${accessMatrix[resource]['Doctor'] ? 'check text-green-400' : 'times text-red-400'}"></i>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <i class="fas fa-${accessMatrix[resource]['Nurse'] ? 'check text-green-400' : 'times text-red-400'}"></i>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <i class="fas fa-${accessMatrix[resource]['Guest'] ? 'check text-green-400' : 'times text-red-400'}"></i>
+                    </td>
+                `;
+                accessMatrixEl.appendChild(row);
+            });
+        }
+        
+        // Add security log
+        function addSecurityLog(source, message, type) {
+            const log = {
+                time: new Date(),
+                source: source,
+                message: message,
+                type: type
+            };
+            
+            securityLogs.unshift(log);
+            if (securityLogs.length > 20) securityLogs.pop();
+            
+            updateSecurityLogs();
+        }
+        
+        // Start automatic process generation
+        function startProcessGeneration() {
+            if (schedulerInterval) clearInterval(schedulerInterval);
+            
+            const rate = parseInt(processRateSelect.value);
+            schedulerInterval = setInterval(() => {
+                if (!isRunning) return;
+                
+                // Randomly decide to generate a process (30% chance)
+                if (Math.random() < 0.3) {
+                    const types = ['Emergency', 'Critical', 'Normal', 'Background'];
+                    const typeWeights = [0.1, 0.2, 0.5, 0.2];
+                    const type = types[weightedRandom(types, typeWeights)];
+                    
+                    const processNames = {
+                        'Emergency': ['Cardiac Monitor', 'Emergency Scan', 'Vitals Alert', 'Code Blue'],
+                        'Critical': ['Blood Analysis', 'CT Scan', 'Lab Results', 'Medication Alert'],
+                        'Normal': ['Patient Record', 'Appointment', 'Billing', 'Inventory Check'],
+                        'Background': ['Data Backup', 'System Log', 'Cleanup', 'Report Generation']
+                    };
+                    
+                    const name = processNames[type][Math.floor(Math.random() * processNames[type].length)];
+                    const burstTime = type === 'Emergency' ? 5 + Math.random() * 10 : 
+                                    type === 'Critical' ? 8 + Math.random() * 15 :
+                                    type === 'Normal' ? 10 + Math.random() * 20 : 20 + Math.random() * 30;
+                    const memory = type === 'Emergency' ? 64 + Math.random() * 64 :
+                                 type === 'Critical' ? 32 + Math.random() * 64 :
+                                 type === 'Normal' ? 16 + Math.random() * 48 : 128 + Math.random() * 128;
+                    
+                    addProcess(name, type, Math.round(burstTime), Math.round(memory));
+                }
+                
+                // Random emergency alert (5% chance)
+                if (document.getElementById('autoEmergency').checked && Math.random() < 0.05) {
+                    triggerEmergency();
+                }
+                
+            }, rate);
+        }
+        
+        // Weighted random selection
+        function weightedRandom(items, weights) {
+            let i;
+            for (i = 1; i < weights.length; i++)
+                weights[i] += weights[i - 1];
+            
+            const random = Math.random() * weights[weights.length - 1];
+            
+            for (i = 0; i < weights.length; i++)
+                if (weights[i] > random)
+                    break;
+            
+            return i;
+        }
+        
+        // Trigger emergency
+        function triggerEmergency() {
+            emergencyAlert.classList.remove('hidden');
+            emergencyAlert.classList.add('alert-pulse');
+            
+            const emergencies = [
+                'EMERGENCY ALERT: Critical patient requires immediate attention!',
+                'CODE BLUE: Cardiac arrest in ICU Room 304!',
+                'URGENT: Multiple trauma patients incoming via ambulance!',
+                'CRITICAL: Ventilator failure in ICU Room 212!'
+            ];
+            
+            const randomEmergency = emergencies[Math.floor(Math.random() * emergencies.length)];
+            document.getElementById('emergencyMessage').textContent = randomEmergency;
+            
+            addSecurityLog('EMERGENCY', randomEmergency, 'danger');
+        }
+        
+        // Start scheduler
+        function startScheduler() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            document.getElementById('schedulerStatus').textContent = 'Running';
+            addSecurityLog('SCHEDULER', 'Scheduler started', 'success');
+            
+            // Start the scheduler loop
+            schedulerLoop();
+        }
+        
+        // Scheduler main loop
+        function schedulerLoop() {
+            if (!isRunning) return;
+            
+            // Multi-level queue scheduling algorithm
+            if (emergencyQueue.length > 0) {
+                // Emergency queue has highest priority
+                executeProcess(emergencyQueue.shift(), 2); // Emergency processes get small time quantum
+            } else if (highPriorityQueue.length > 0) {
+                // High priority queue
+                executeProcess(highPriorityQueue.shift(), 4);
+            } else if (normalQueue.length > 0) {
+                // Normal queue with Round Robin
+                const process = normalQueue.shift();
+                if (process.remainingTime > 5) {
+                    // Execute for time quantum
+                    executeProcess(process, 5);
+                    // Put back in queue if not finished
+                    if (process.remainingTime > 0) {
+                        normalQueue.push(process);
+                    }
+                } else {
+                    executeProcess(process, process.remainingTime);
+                }
+            } else if (backgroundQueue.length > 0) {
+                // Background processes (lowest priority)
+                const process = backgroundQueue.shift();
+                if (process.remainingTime > 10) {
+                    executeProcess(process, 10);
+                    if (process.remainingTime > 0) {
+                        backgroundQueue.push(process);
+                    }
+                } else {
+                    executeProcess(process, process.remainingTime);
+                }
+            }
+            
+            // Continue scheduler loop
+            setTimeout(schedulerLoop, 100);
+        }
+        
+        // Execute a process
+        function executeProcess(process, executeTime) {
+            if (!process.startTime) {
+                process.startTime = Date.now();
+            }
+            
+            currentProcess = process;
+            updateCurrentProcess();
+            
+            // Simulate execution with animation
+            const executionInterval = setInterval(() => {
+                if (process.remainingTime <= 0 || !isRunning) {
+                    clearInterval(executionInterval);
+                    processComplete(process);
+                    return;
+                }
+                
+                process.remainingTime--;
+                updateCurrentProcess();
+                
+                // Add to Gantt chart
+                ganttChart.push({
+                    process: process.name.substring(0, 8),
+                    type: process.type,
+                    time: 1
+                });
+                
+                // Keep Gantt chart manageable
+                if (ganttChart.length > 20) {
+                    ganttChart.shift();
+                }
+                
+                updateGanttChart();
+                
+            }, 100); // Each "ms" takes 100ms real time for visualization
+            
+            // Simulate actual execution time
+            setTimeout(() => {
+                clearInterval(executionInterval);
+                if (process.remainingTime > 0) {
+                    // Process was preempted
+                    currentProcess = null;
+                    updateCurrentProcess();
+                }
+            }, executeTime * 100);
+        }
+        
+        // Process completion
+        function processComplete(process) {
+            process.endTime = Date.now();
+            process.turnaroundTime = process.endTime - process.arrivalTime;
+            process.waitingTime = process.turnaroundTime - process.burstTime;
+            
+            // Update statistics
+            completedProcesses++;
+            totalWaitingTime += process.waitingTime;
+            totalTurnaroundTime += process.turnaroundTime;
+            
+            // Free memory
+            freeMemory(process);
+            
+            // Update UI
+            currentProcess = null;
+            updateCurrentProcess();
+            updatePerformanceMetrics();
+            updateMemoryStats();
+            
+            // Log completion
+            addSecurityLog('SCHEDULER', `Process ${process.name} completed`, 'info');
+        }
+        
+        // Free memory allocated to process
+        function freeMemory(process) {
+            for (let i = 0; i < memoryPartitions.length; i++) {
+                if (memoryPartitions[i].process === process.name) {
+                    memoryPartitions[i].allocated = false;
+                    memoryPartitions[i].process = null;
+                    memoryAllocated -= process.memory;
+                    updatePartitionUI(memoryPartitions[i].id);
+                    break;
+                }
+            }
+        }
+        
+        // Pause scheduler
+        function pauseScheduler() {
+            isRunning = false;
+            document.getElementById('schedulerStatus').textContent = 'Paused';
+            addSecurityLog('SCHEDULER', 'Scheduler paused', 'warning');
+        }
+        
+        // Reset scheduler
+        function resetScheduler() {
+            isRunning = false;
+            
+            // Clear all queues
+            emergencyQueue = [];
+            highPriorityQueue = [];
+            normalQueue = [];
+            backgroundQueue = [];
+            processQueue = [];
+            ganttChart = [];
+            currentProcess = null;
+            
+            // Free all memory
+            memoryPartitions.forEach(partition => {
+                partition.allocated = false;
+                partition.process = null;
+            });
+            memoryAllocated = 0;
+            
+            // Reset statistics
+            completedProcesses = 0;
+            totalWaitingTime = 0;
+            totalTurnaroundTime = 0;
+            cpuBusyTime = 0;
+            cpuUtilizationStart = Date.now();
+            
+            // Update UI
+            updateUI();
+            
+            addSecurityLog('SCHEDULER', 'Scheduler reset', 'warning');
+        }
+        
+        // Simulate LRU paging
+        function simulateLRU() {
+            const referenceString = document.getElementById('pageReference').value;
+            pageReferences = referenceString.split(',').map(num => parseInt(num.trim()));
+            currentReferenceIndex = 0;
+            pageHits = 0;
+            pageFaults = 0;
+            pageTable.fill(-1);
+            
+            // Initialize page table display
+            updatePageTable();
+            
+            // Start simulation
+            simulateNextPage();
+        }
+        
+        // Simulate next page reference
+        function simulateNextPage() {
+            if (currentReferenceIndex >= pageReferences.length) {
+                // Simulation complete
+                document.getElementById('pageHits').textContent = pageHits;
+                document.getElementById('pageFaults').textContent = pageFaults;
+                
+                const total = pageHits + pageFaults;
+                const hitRatio = total > 0 ? Math.round((pageHits / total) * 100) : 0;
+                const faultRate = total > 0 ? Math.round((pageFaults / total) * 100) : 0;
+                
+                document.getElementById('hitRatio').textContent = `${hitRatio}%`;
+                document.getElementById('faultRate').textContent = `${faultRate}%`;
+                
+                addSecurityLog('MEMORY', `Paging simulation completed: ${pageHits} hits, ${pageFaults} faults`, 'info');
+                return;
+            }
+            
+            const page = pageReferences[currentReferenceIndex];
+            
+            // Check if page is in memory
+            const pageIndex = pageTable.indexOf(page);
+            
+            if (pageIndex !== -1) {
+                // Page hit
+                pageHits++;
+                
+                // Move page to most recent position (LRU)
+                pageTable.splice(pageIndex, 1);
+                pageTable.push(page);
+            } else {
+                // Page fault
+                pageFaults++;
+                
+                if (pageTable.includes(-1)) {
+                    // There's an empty slot
+                    const emptyIndex = pageTable.indexOf(-1);
+                    pageTable[emptyIndex] = page;
+                } else {
+                    // Replace LRU page (first element)
+                    pageTable.shift();
+                    pageTable.push(page);
+                }
+            }
+            
+            // Update display
+            updatePageTable();
+            currentReferenceIndex++;
+            
+            // Continue simulation
+            setTimeout(simulateNextPage, 500);
+        }
+        
+        // Update page table display
+        function updatePageTable() {
+            pageTableEl.innerHTML = '';
+            
+            pageTable.forEach((page, index) => {
+                const pageSlot = document.createElement('div');
+                pageSlot.className = 'glass-card p-3 rounded-lg text-center';
+                pageSlot.innerHTML = `
+                    <div class="text-xs text-gray-500 mb-1">Frame ${index}</div>
+                    <div class="text-xl font-bold ${page === -1 ? 'text-gray-500' : 'text-blue-400'}">
+                        ${page === -1 ? 'Empty' : page}
+                    </div>
+                `;
+                pageTableEl.appendChild(pageSlot);
+            });
+        }
+        
+        // View file
+        function viewFile(index) {
+            const file = files[index];
+            const encryptedContent = encryptContent(file.content, file.key || 'HOSPITAL2024');
+            
+            alert(`File: ${file.name}\n\nEncrypted Content:\n${encryptedContent.substring(0, 200)}...\n\nSize: ${file.size} KB\nAllocation: ${file.allocation}`);
+        }
+        
+        // Decrypt file
+        function decryptFile(index) {
+            const file = files[index];
+            const key = prompt('Enter decryption key:', file.key || 'HOSPITAL2024');
+            
+            if (key === (file.key || 'HOSPITAL2024')) {
+                alert(`File: ${file.name}\n\nDecrypted Content:\n${file.content}`);
+                addSecurityLog('FILE SYSTEM', `File ${file.name} decrypted successfully`, 'success');
+            } else {
+                alert('Incorrect decryption key!');
+                addSecurityLog('FILE SYSTEM', `Failed decryption attempt for ${file.name}`, 'danger');
+            }
+        }
+        
+        // Encrypt content
+        function encryptContent(content, key) {
+            // Simple XOR encryption for demonstration
+            let encrypted = '';
+            for (let i = 0; i < content.length; i++) {
+                const charCode = content.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                encrypted += String.fromCharCode(charCode);
+            }
+            return btoa(encrypted); // Base64 encode
+        }
+        
+        // Allocate file blocks
+        function allocateFileBlocks(size) {
+            let blocksNeeded = Math.ceil(size / 4);
+            let allocatedBlocks = [];
+            
+            for (let i = 0; i < allocationMap.length && blocksNeeded > 0; i++) {
+                if (!allocationMap[i]) {
+                    allocationMap[i] = true;
+                    allocatedBlocks.push(i);
+                    blocksNeeded--;
+                }
+            }
+            
+            return allocatedBlocks;
+        }
+        
+        // Export logs
+        function exportLogs() {
+            const logs = securityLogs.map(log => 
+                `${log.time.toLocaleString()}: [${log.source}] ${log.message}`
+            ).join('\n');
+            
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hospital-os-logs.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            addSecurityLog('SYSTEM', 'Logs exported', 'info');
+        }
+        
+        // Quick login
+        function quickLogin() {
+            const role = document.getElementById('userRole').value;
+            currentUserRole = role;
+            
+            document.getElementById('currentUserRole').textContent = role;
+            document.getElementById('currentRole').textContent = role;
+            
+            // Update tab accessibility
+            tabBtns.forEach(btn => {
+                const tabId = btn.getAttribute('data-tab');
+                if (!accessMatrix[tabId][currentUserRole]) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+            
+            addSecurityLog('SECURITY', `User logged in as ${role}`, 'success');
+        }
+        
+        // Clear logs
+        function clearLogs() {
+            if (confirm('Are you sure you want to clear all logs? This cannot be undone.')) {
+                securityLogs = [];
+                updateSecurityLogs();
+                addSecurityLog('SYSTEM', 'All logs cleared', 'warning');
+            }
+        }
+        
+        // Reset system
+        function resetSystem() {
+            if (confirm('WARNING: This will reset the entire system to initial state. Are you sure?')) {
+                // Reset all variables
+                processCounter = 1;
+                completedProcesses = 0;
+                totalWaitingTime = 0;
+                totalTurnaroundTime = 0;
+                memoryAllocated = 0;
+                pageHits = 0;
+                pageFaults = 0;
+                currentUserRole = 'Administrator';
+                
+                // Clear queues
+                emergencyQueue = [];
+                highPriorityQueue = [];
+                normalQueue = [];
+                backgroundQueue = [];
+                processQueue = [];
+                ganttChart = [];
+                currentProcess = null;
+                files = [];
+                securityLogs = [];
+                allocationMap.fill(false);
+                
+                // Reset memory partitions
+                memoryPartitions.forEach(partition => {
+                    partition.allocated = false;
+                    partition.process = null;
+                });
+                
+                // Reset page table
+                pageTable.fill(-1);
+                
+                // Update UI
+                updateUI();
+                
+                // Reinitialize components
+                initFileSystem();
+                
+                addSecurityLog('SYSTEM', 'Full system reset performed', 'danger');
+            }
+        }
+        
+        // Event Listeners
+        themeToggle.addEventListener('click', () => {
+            const html = document.documentElement;
+            const themeIcon = themeToggle.querySelector('i');
+            
+            if (currentTheme === 'dark') {
+                currentTheme = 'light';
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-sun text-yellow-500';
+            } else {
+                currentTheme = 'dark';
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-moon text-yellow-500';
+            }
+        });
+        
+        // Tab switching
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Check if user has access to this tab
+                if (!accessMatrix[tabId][currentUserRole]) {
+                    addSecurityLog('SECURITY', `Access denied to ${tabId} tab for ${currentUserRole} role`, 'danger');
+                    return;
+                }
+                
+                // Update tab buttons
+                tabBtns.forEach(b => {
+                    b.classList.remove('bg-gradient-to-r', 'from-blue-500', 'to-purple-500', 'text-white', 'shadow-lg');
+                    b.classList.add('hover:bg-opacity-80');
+                });
+                
+                btn.classList.remove('hover:bg-opacity-80');
+                btn.classList.add('bg-gradient-to-r', 'from-blue-500', 'to-purple-500', 'text-white', 'shadow-lg');
+                
+                // Update tab content
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                document.getElementById(tabId).classList.remove('hidden');
+                currentTab = tabId;
+            });
+        });
+        
+        // Quick actions
+        quickEmergencyBtn.addEventListener('click', triggerEmergency);
+        
+        quickStartBtn.addEventListener('click', () => {
+            if (!isRunning) {
+                startScheduler();
+                quickStartBtn.innerHTML = '<i class="fas fa-pause text-2xl"></i><span class="font-medium">Pause Simulation</span>';
+            } else {
+                pauseScheduler();
+                quickStartBtn.innerHTML = '<i class="fas fa-play text-2xl"></i><span class="font-medium">Start Simulation</span>';
+            }
+        });
+        
+        quickResetBtn.addEventListener('click', resetSystem);
+        
+        quickReportBtn.addEventListener('click', exportLogs);
+        
+        // Scheduler controls
+        startSchedulerBtn.addEventListener('click', startScheduler);
+        pauseSchedulerBtn.addEventListener('click', pauseScheduler);
+        resetSchedulerBtn.addEventListener('click', resetScheduler);
+        
+        // Add process button
+        addProcessBtn.addEventListener('click', () => {
+            const name = document.getElementById('processName').value || `Process ${processCounter}`;
+            const type = document.getElementById('processType').value;
+            const burstTime = parseInt(document.getElementById('processBurst').value) || 10;
+            const memory = parseInt(document.getElementById('processMemory').value) || 64;
+            
+            if (addProcess(name, type, burstTime, memory)) {
+                document.getElementById('processName').value = '';
+                document.getElementById('processBurst').value = 10;
+                document.getElementById('processMemory').value = 64;
+            } else {
+                alert('Failed to add process: Not enough memory!');
+            }
+        });
+        
+        // Memory allocation methods
+        allocationMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                allocationMethods.forEach(m => {
+                    m.classList.remove('border', 'border-blue-500', 'text-blue-500');
+                });
+                
+                method.classList.add('border', 'border-blue-500', 'text-blue-500');
+                currentAllocationMethod = method.getAttribute('data-method');
+                addSecurityLog('MEMORY', `Allocation method changed to ${currentAllocationMethod}`, 'info');
+            });
+        });
+        
+        // Simulate paging
+        simulatePagingBtn.addEventListener('click', simulateLRU);
+        
+        // Create file button
+        createFileBtn.addEventListener('click', () => {
+            const name = document.getElementById('fileName').value;
+            const encryption = document.getElementById('encryptionType').value;
+            const allocation = document.getElementById('allocationMethod').value;
+            const key = document.getElementById('encryptionKey').value;
+            const content = document.getElementById('fileContent').value;
+            
+            if (!name || !content) {
+                alert('Please enter file name and content!');
+                return;
+            }
+            
+            const file = {
+                name: name,
+                type: 'Normal',
+                size: Math.ceil(content.length / 4),
+                encrypted: true,
+                encryption: encryption,
+                allocation: allocation,
+                content: content,
+                key: key
+            };
+            
+            files.unshift(file);
+            
+            // Allocate blocks for file
+            allocateFileBlocks(file.size);
+            
+            updateFileBrowser();
+            updateAllocationMap();
+            
+            // Add to audit log
+            const auditEntry = document.createElement('div');
+            auditEntry.className = 'log-entry glass-card p-3 rounded-xl border-l-4 border-green-500';
+            auditEntry.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">File created: ${name}</span>
+                    <span class="text-sm text-gray-500">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">User: ${currentUserRole}</div>
+            `;
+            auditLogsEl.prepend(auditEntry);
+            
+            addSecurityLog('FILE SYSTEM', `Created new file: ${name}`, 'info');
+            
+            // Clear form
+            document.getElementById('fileName').value = '';
+            document.getElementById('fileContent').value = '';
+        });
+        
+        // Logout button
+        logoutBtn.addEventListener('click', () => {
+            currentUserRole = 'Guest';
+            document.getElementById('currentUserRole').textContent = currentUserRole;
+            document.getElementById('currentRole').textContent = currentUserRole;
+            
+            // Disable tabs based on new role
+            tabBtns.forEach(btn => {
+                const tabId = btn.getAttribute('data-tab');
+                if (!accessMatrix[tabId][currentUserRole]) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
+            
+            addSecurityLog('SECURITY', 'User logged out', 'info');
+        });
+        
+        // Quick login button
+        quickLoginBtn.addEventListener('click', quickLogin);
+        
+        // Export logs button
+        document.getElementById('exportLogs').addEventListener('click', exportLogs);
+        
+        // Clear logs button
+        clearLogsBtn.addEventListener('click', clearLogs);
+        
+        // Reset system button
+        resetSystemBtn.addEventListener('click', resetSystem);
+        
+        // Acknowledge alert button
+        acknowledgeAlertBtn.addEventListener('click', () => {
+            emergencyAlert.classList.add('hidden');
+            emergencyAlert.classList.remove('alert-pulse');
+            addSecurityLog('EMERGENCY', 'Emergency alert acknowledged', 'info');
+        });
+        
+        // Process rate change
+        processRateSelect.addEventListener('change', () => {
+            if (isRunning) {
+                startProcessGeneration();
+            }
+        });
+        
+        // Theme selectors
+        themeSelectors.forEach(selector => {
+            selector.addEventListener('click', () => {
+                const theme = selector.getAttribute('data-theme');
+                document.documentElement.setAttribute('data-theme', theme);
+                currentTheme = theme;
+                
+                // Update theme toggle icon
+                const themeIcon = themeToggle.querySelector('i');
+                if (theme === 'dark') {
+                    themeIcon.className = 'fas fa-moon text-yellow-500';
+                } else if (theme === 'light') {
+                    themeIcon.className = 'fas fa-sun text-yellow-500';
+                } else {
+                    themeIcon.className = 'fas fa-palette text-yellow-500';
+                }
+                
+                addSecurityLog('SYSTEM', `Theme changed to ${theme}`, 'info');
+            });
+        });
+        
+        // Initialize the system
+        init();
+        
+        // Expose functions to global scope for onclick handlers
+        window.viewFile = viewFile;
+        window.decryptFile = decryptFile;
+        
+    </script>
+</body>
+</html>
